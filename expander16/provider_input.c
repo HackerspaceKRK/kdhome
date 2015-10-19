@@ -26,7 +26,7 @@ void provInputProcess(TByteBuffer* data)
 	case INPUT_NOTF_NEWSTATE:
 		break;
 	case INPUT_REQ_SENDSTATE:
-		myprintf("INPUT REQUESET!!!\r\n");
+		myprintf("INPUT REQUESTVirtusLab/blog!!!\r\n");
 		provInputSendState();
 		break;
 	}
