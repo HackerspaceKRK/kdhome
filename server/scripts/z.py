@@ -16,6 +16,9 @@ class Light(kdhome.KDHome):
     userState = None
     roomState = None
 
+    roomSwitchTimers = {}
+    rooms = ["KITCHEN" , "HARDROOM", "SOFTROOM", "CORRIDOR", "CHILLROOM"]
+
     def __init__(self):
         super().__init__()
 
@@ -28,11 +31,32 @@ class Light(kdhome.KDHome):
             sys.stdout.flush()
             sys.stderr.flush()
 
+    def oneRoom(self, name):
+       for room in self.rooms:
+           if name == room:
+               self.setOutput(room, 0)
+           else:
+               self.setOutput(room, 1)
+
+    def leavingHS(self):
+        self.oneRoom("CORRIDOR")
+        self.setTimeout("leaving", 30, lambda: self.setOutput("CORRIDOR", 1))
+    
     def onInputChangedEvent(self, id, name, value):
         if value == 0:
-            for atgl in ["KITCHEN" , "HARDROOM", "SOFTROOM", "CORRIDOR", "CHILLROOM"]:
-                if name == atgl:
-                    self.toggleOutput(atgl)
+            if name in self.rooms:
+               self.roomSwitchTimers[name] = time.time()
+        elif value == 1:
+            if name in self.rooms:
+               released = time.time()
+               pressed = self.roomSwitchTimers[name]
+               diff = released - pressed
+               if diff < 2:
+                   self.toggleOutput(name) 
+               elif diff > 2 and diff < 5:
+                    self.leavingHS()
+               elif diff >= 5 and diff < 10:
+                    self.oneRoom(name)
 
     def onInitEvent(self, ev):
         print("INIT")
@@ -58,6 +82,8 @@ class Light(kdhome.KDHome):
         
         self.setTempName("exp1-0", "KORYTARZYK")
 
+        #for atgl in ["KITCHEN" , "HARDROOM", "SOFTROOM", "CORRIDOR", "CHILLROOM"]:
+        #        self.toggleOutput(atgl)
         return True
 
 
@@ -69,6 +95,6 @@ class Light(kdhome.KDHome):
 
 
 kd = Light()
-kd.connect("localhost", 9999)
+kd.connect("rudy.at.hskrk.pl", 9999)
 kd.reset()
 kd.run()
