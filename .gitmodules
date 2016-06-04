@@ -1,6 +1,6 @@
 [submodule "server/3rd/json4lua"]
 	path = server/3rd/json4lua
-	url = git@github.com:craigmj/json4lua.git
+	url = https://github.com/craigmj/json4lua.git
 [submodule "3rd/Arduino-IRremote"]
 	path = 3rd/Arduino-IRremote
 	url = https://github.com/shirriff/Arduino-IRremote.git
